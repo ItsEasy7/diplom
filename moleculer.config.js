@@ -21,8 +21,8 @@ module.exports = {
 	},
 
 	logLevel: "info",
-	transporter: "AMQP",
-	cacher: "Redis",
+	transporter: "null",
+	cacher: "null",
 	serializer: "JSON",
 	requestTimeout: 10 * 1000,
 
@@ -76,21 +76,6 @@ module.exports = {
 
 	validator: true,
 	errorHandler: null,
-
-	metrics: {
-		enabled: true,
-		reporter: {
-			type: "Prometheus",
-			options: {
-				port: 3030,
-				path: "/metrics",
-				defaultLabels: registry => ({
-					namespace: registry.broker.namespace,
-					nodeID: registry.broker.nodeID
-				})
-			}
-		}
-	},
 
 	tracing: {
 		enabled: true,
