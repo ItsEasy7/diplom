@@ -1,6 +1,5 @@
 {
     namespace: "dev",
-    nodeID: "node-25",
 
     logger: true,
     logLevel: "info",
