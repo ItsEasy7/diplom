@@ -1,102 +1,94 @@
-"use strict";
+{
+    namespace: "dev",
+    nodeID: "node-25",
 
-/**
- * Moleculer ServiceBroker configuration file
- * @type {import('moleculer').BrokerOptions}
- */
-module.exports = {
-	namespace: "",
-	nodeID: null,
-	metadata: {},
+    logger: true,
+    logLevel: "info",
+    logFormatter: "default",
+    logObjectPrinter: null,
 
-	logger: {
-		type: "Console",
-		options: {
-			colors: true,
-			moduleColors: false,
-			formatter: "full",
-			objectPrinter: null,
-			autoPadding: false
-		}
-	},
+    transporter: "nats://localhost:4222",
 
-	logLevel: "info",
-	transporter: "null",
-	cacher: "null",
-	serializer: "JSON",
-	requestTimeout: 10 * 1000,
+    requestTimeout: 5000,
+    retryPolicy: {
+        enabled: true,
+        retries: 5,
+        delay: 100,
+        maxDelay: 1000,
+        factor: 2,
+        check: err => err && !!err.retryable
+    },
 
-	retryPolicy: {
-		// Enable feature
-		enabled: false,
-		// Count of retries
-		retries: 5,
-		// First delay in milliseconds.
-		delay: 200,
-		// Maximum delay in milliseconds.
-		maxDelay: 1000,
-		// Backoff factor for delay. 2 means exponential backoff.
-		factor: 2,
-		// A function to check failed requests.
-		check: err => err && !!err.retryable
-	},
+    contextParamsCloning: false,
+    maxCallLevel: 100,
+    heartbeatInterval: 5,
+    heartbeatTimeout: 15,
+    
+    tracking: {
+        enabled: true,
+        shutdownTimeout: 5000,
+    },
 
-	maxCallLevel: 100,
-	heartbeatInterval: 10,
-	heartbeatTimeout: 30,
-	contextParamsCloning: false,
+    disableBalancer: false,
 
-	tracking: {
-		// Enable feature
-		enabled: false,
-		// Number of milliseconds to wait before shuting down the process.
-		shutdownTimeout: 5000,
-	},
-	disableBalancer: false,
+    registry: {
+        strategy: "RoundRobin",
+        preferLocal: true
+    },
 
-	registry: {
-		strategy: "RoundRobin",
-		preferLocal: true
-	},
+    circuitBreaker: {
+        enabled: true,
+        threshold: 0.5,
+        windowTime: 60,
+        minRequestCount: 20,
+        halfOpenTime: 10 * 1000,
+        check: err => err && err.code >= 500
+    },   
 
-	circuitBreaker: {
-		enabled: false,
-		threshold: 0.5,
-		minRequestCount: 20,
-		windowTime: 60,
-		halfOpenTime: 10 * 1000,
-		check: err => err && err.code >= 500
-	},
+    bulkhead: {
+        enabled: true,
+        concurrency: 10,
+        maxQueueSize: 100,
+    },
 
-	bulkhead: {
-		enabled: false,
-		concurrency: 10,
-		maxQueueSize: 100,
-	},
+    transit: {
+        maxQueueSize: 50 * 1000,
+        disableReconnect: false,
+        disableVersionCheck: false,
+        packetLogFilter: ["HEARTBEAT"]
+    },
 
-	validator: true,
-	errorHandler: null,
+    uidGenerator: null,
 
-	tracing: {
-		enabled: true,
-		exporter: {
-			type: "Console",
-			options: {
-				// Custom logger
-				logger: null,
-				// Using colors
-				colors: true,
-				// Width of row
-				width: 100,
-				// Gauge width in the row
-				gaugeWidth: 40
-			}
-		}
-	},
+    errorHandler: null,
+    
+    cacher: "MemoryLRU",
+    serializer: "JSON",
 
-	middlewares: [],
-	replCommands: null,
-	created() {},
-	started() {},
-	stopped() {}
-};
+    validator: true,
+    errorRegenerator: null,
+
+    metrics: {
+        enabled: true,
+        reporter: [
+            "Console"
+        ]
+    },
+
+    tracing: {
+        enabled: true,
+        exporter: [
+            "Console"
+        ]
+    },
+
+    internalServices: true,
+    internalMiddlewares: true,
+
+    hotReload: true,
+
+    middlewares: ["MyMiddleware"],
+
+    replDelimiter: "mol $",
+    replCommands: [],
+}
